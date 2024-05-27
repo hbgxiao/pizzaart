@@ -225,11 +225,7 @@
                     return;
             }
     
-            quantity = 30;
-    
-            if (topping === 'cheese' || topping === 'peppers') {
-                quantity *= 2;
-            }
+            quantity = 60;
     
             let startAngle = segment * Math.PI / 4 - Math.PI / 2;
             let endAngle = (segment + 1) * Math.PI / 4 - Math.PI / 2;
@@ -247,7 +243,7 @@
     
                 ctx.beginPath();
                 if (shape === 'circle') {
-                    ctx.arc(x, y, 10, 0, 2 * Math.PI, false);
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
                 } else if (shape === 'rectangle') {
                     ctx.rect(x, y, 10, 5); 
                 } else if (shape === 'crescent') {
