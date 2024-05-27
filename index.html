@@ -9,8 +9,8 @@
             padding: 0;
           }
           .container {
-            max-width: 1400px;
-            margin: 0 auto;
+            max-width: 1350px;
+            margin: 0 100px;
             padding: 0 5px;
           }
           b {
@@ -22,7 +22,7 @@
           }
           canvas {
             display: block;
-            margin: 20px auto;
+            margin: 10px auto;
           }
           .column1 {
             float: left;
@@ -50,7 +50,6 @@
               <h2>Select toppings</h2>
               <ul>
                 <li>
-                  <input type="checkbox" id="cheese" name="topping" value="cheese">
                   <label for="cheese">Cheese</label>
                   <select id="cheese-amount">
                     <option value="0">None</option>
@@ -62,7 +61,6 @@
                 </li>
                 &nbsp;
                 <li>
-                  <input type="checkbox" id="pepperoni" name="topping" value="pepperoni">
                   <label for="pepperoni">Pepperoni</label>
                   <select id="pepperoni-amount">
                     <option value="0">None</option>
@@ -74,7 +72,6 @@
                 </li>
                 &nbsp;
                 <li>
-                  <input type="checkbox" id="sausage" name="topping" value="sausage">
                   <label for="sausage">Sausage</label>
                   <select id="sausage-amount">
                     <option value="0">None</option>
@@ -86,7 +83,6 @@
                 </li>
                 &nbsp;
                 <li>
-                  <input type="checkbox" id="peppers" name="topping" value="peppers">
                   <label for="peppers">Peppers</label>
                   <select id="peppers-amount">
                     <option value="0">None</option>
@@ -98,7 +94,6 @@
                 </li>
                 &nbsp;
                 <li>
-                  <input type="checkbox" id="mushrooms" name="topping" value="mushrooms">
                   <label for="mushrooms">Mushrooms</label>
                   <select id="mushrooms-amount">
                     <option value="0">None</option>
@@ -136,8 +131,6 @@
         let toppings = new Array(8).fill(null);
     
         function drawPizza() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
             ctx.beginPath();
             ctx.arc(centerX, centerY, 190, 0, 2 * Math.PI, false);
             ctx.fillStyle = 'yellow';
@@ -155,11 +148,11 @@
     
             ctx.lineWidth = 2;
             ctx.strokeStyle = 'white';
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 4; i++) {
                 ctx.beginPath();
-                ctx.moveTo(centerX, centerY);
                 const angle = (i * Math.PI) / 4;
-                ctx.lineTo(centerX + 190 * Math.cos(angle), centerY + 190 * Math.sin(angle));
+                ctx.moveTo(centerX + 190 * Math.cos(angle), centerY + 190 * Math.sin(angle));
+                ctx.lineTo(centerX - 190 * Math.cos(angle), centerY - 190 * Math.sin(angle));
                 ctx.stroke();
                 ctx.closePath();
             }
@@ -170,22 +163,18 @@
     
             let index = 0;
 
-            // get the selected toppings
-            const toppingInputs = document.querySelectorAll('input[name="topping"]:checked');
-    
-            // get amount of each topping and fill array as such
-            toppingInputs.forEach(input => {
-                const topping = input.value;
-                const amount = parseInt(document.getElementById(`${topping}-amount`).value);
-                for (let i = 0; i < amount; i++) {
-                    if (index < 8) {
-                        toppings[index] = topping;
-                        index++;
-                    }
+            const toppingSelects = document.querySelectorAll('select[id$="-amount"]');
+
+            toppingSelects.forEach(select => {
+              const topping = select.id.replace('-amount', '');
+              const amount = parseInt(select.value);
+              for (let i = 0; i < amount; i++) {
+                if (index < 8) {
+                  toppings[index] = topping;
+                  index++;
                 }
+              }
             });
-    
-            console.log('Toppings array:', toppings);
     
             drawPizza();
     
@@ -199,7 +188,6 @@
     
         function addTopping(topping, segment) {
             let color, shape, quantity;
-    
             switch (topping) {
                 case 'cheese':
                     color = 'yellow';
@@ -225,7 +213,12 @@
                     return;
             }
     
-            quantity = 60;
+            quantity = 40;
+
+            if (topping === "cheese" || topping === "peppers") {
+              quantity *= 1.5;
+            }
+
     
             let startAngle = segment * Math.PI / 4 - Math.PI / 2;
             let endAngle = (segment + 1) * Math.PI / 4 - Math.PI / 2;
@@ -233,7 +226,7 @@
             for (let i = 0; i < quantity; i++) {
                 let angle, radius, x, y;
     
-                angle = Math.random() * (endAngle - startAngle) + startAngle;
+                angle = Math.random() * (Math.PI / 4) + startAngle;
                 radius = Math.random() * 170; 
     
                 x = centerX + radius * Math.cos(angle);
@@ -243,7 +236,7 @@
     
                 ctx.beginPath();
                 if (shape === 'circle') {
-                    ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
+                    ctx.arc(x, y, 10, 0, 2 * Math.PI);
                 } else if (shape === 'rectangle') {
                     ctx.rect(x, y, 10, 5); 
                 } else if (shape === 'crescent') {
@@ -261,14 +254,11 @@
     
             toppings = new Array(8).fill(null);
     
-            const toppingInputs = document.querySelectorAll('input[name="topping"]');
-    
-            toppingInputs.forEach(input => {
-                input.checked = false;
-                document.getElementById(`${input.value}-amount`).value = '0';
+            const toppingSelects = document.querySelectorAll('select[id$="-amount"]');
+
+            toppingSelects.forEach(select => {
+              select.value = '0';
             });
-    
-            console.log('Toppings array:', toppings);
         }
     
         drawPizza();
